@@ -1,8 +1,7 @@
 package sa.factory.gharsloraagritech1.model
 
-import kotlinx.serialization.Serializable
+import java.io.Serializable
 
-@Serializable
 data class GharsLoraItem(
     val id: String,
     val title: String,
@@ -11,9 +10,8 @@ data class GharsLoraItem(
     val badge: String = "معتمد",
     val category: String = "عام",
     val status: String = "AVAILABLE"
-)
+) : Serializable
 
-@Serializable
 data class GharsLoraOrder(
     val orderId: String,
     val items: List<GharsLoraItem>,
@@ -23,9 +21,8 @@ data class GharsLoraOrder(
     val paymentMethod: String = "Mada Contactless EMV",
     val timestamp: Long = System.currentTimeMillis(),
     val status: String = "CONFIRMED"
-)
+) : Serializable
 
-@Serializable
 data class GharsLoraTelemetry(
     val peripheralName: String,
     val status: String,
@@ -33,11 +30,31 @@ data class GharsLoraTelemetry(
     val batteryPct: Int = 98,
     val signalDbm: Int = -58,
     val timestamp: Long = System.currentTimeMillis()
-)
+) : Serializable
 
-sealed interface UiState<out T> {
-    object Loading : UiState<Nothing>
-    data class Success<T>(val data: T) : UiState<T>
-    data class Error(val message: String) : UiState<Nothing>
-    object Empty : UiState<Nothing>
+sealed class UiState<out T> {
+    object Loading : UiState<Nothing>()
+    data class Success<T>(val data: T) : UiState<T>()
+    data class Error(val message: String) : UiState<Nothing>()
+    object Empty : UiState<Nothing>()
 }
+
+data class SoilTelemetryPacket(
+    val temperatureCelsius: Double,
+    val relativeHumidityPct: Double,
+    val soilMoistureVwcPct: Double,
+    val soilSalinityDsm: Double,
+    val solenoidValveOpen: Boolean,
+    val batteryVoltage: Double,
+    val rawHexPayload: String
+) : Serializable
+
+data class IrrigationDecision(
+    val datePalmVariety: String,
+    val currentMoisturePct: Double,
+    val thresholdMoisturePct: Double,
+    val requiresIrrigation: Boolean,
+    val recommendedRuntimeMinutes: Int,
+    val downlinkCommandHex: String,
+    val waterEstimatedLiters: Double
+) : Serializable
